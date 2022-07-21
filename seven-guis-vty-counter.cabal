@@ -12,20 +12,24 @@ maintainer:         maintainer@obsidian.systems
 copyright:          2022 Obsidian Systems LLC
 category:           GUI
 extra-source-files: CHANGELOG.md
-                    src/Main.md
                     images/*.png
                     LICENSE
+                    README.md
 
 executable seven-guis-vty-counter
     main-is:          Main.lhs
     default-extensions:
       OverloadedStrings
       RecursiveDo
-    build-depends:    base
-                    , reflex
-                    , reflex-vty
-                    , text
-                    , vty
+    build-depends:    base >= 4.10 && < 4.16
+                    , reflex >= 0.8 && < 0.9
+                    , reflex-vty >= 0.2 && < 0.3
+                    , text >= 1.2.3 && < 1.3
+                    , vty >= 5.28 && < 5.37
     default-language: Haskell2010
     ghc-options: -pgmL markdown-unlit -Wall
     build-tool-depends: markdown-unlit:markdown-unlit -any
+
+source-repository head
+  type: git
+  location: https://github.com/obsidiansystems/seven-guis-vty
