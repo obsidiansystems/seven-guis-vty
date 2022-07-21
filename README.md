@@ -69,7 +69,7 @@ Enough with the preliminaries; let's get on to the code.
 As mentioned above, we'll start by importing the libraries our project depends on. Don't worry if you don't understand why something is in the import list: we'll explain that as we go.
 
 ```haskell
--- Thse imports are unqualified because we'll be using them heavily
+-- These imports are unqualified because we'll be using them heavily
 import Reflex
 import Reflex.Vty
 
@@ -213,7 +213,7 @@ Looks like we need to figure out how to lay things out inside our little termina
 
 ### Layout
 
-There are a few ways we can lay things out in reflex-vty, from manually specificying locations to using some helpful [layout algorithms](https://hackage.haskell.org/package/reflex-vty-0.2.0.1/docs/Reflex-Vty-Widget-Layout.html#g:12). Using the [`Layout`](https://hackage.haskell.org/package/reflex-vty-0.2.0.1/docs/Reflex-Vty-Widget-Layout.html#t:Layout) functionality of reflex-vty, you can specify some layout constraints and have reflex-vty figure out where to draw things to satisfy those constraints.
+There are a few ways we can lay things out in reflex-vty, from manually specifying locations to using some helpful [layout algorithms](https://hackage.haskell.org/package/reflex-vty-0.2.0.1/docs/Reflex-Vty-Widget-Layout.html#g:12). Using the [`Layout`](https://hackage.haskell.org/package/reflex-vty-0.2.0.1/docs/Reflex-Vty-Widget-Layout.html#t:Layout) functionality of reflex-vty, you can specify some layout constraints and have reflex-vty figure out where to draw things to satisfy those constraints.
 
 We'll specify our layout constraints using the [`tile`](https://hackage.haskell.org/package/reflex-vty-0.2.0.1/docs/Reflex-Vty-Widget-Layout.html#v:tile) function for things that are focusable and the [`grout`](https://hackage.haskell.org/package/reflex-vty-0.2.0.1/docs/Reflex-Vty-Widget-Layout.html#v:grout) for things that are not (but nevertheless take up space). Each of these functions takes a `Constraint` that determines how it shares space with other widgets.
 
