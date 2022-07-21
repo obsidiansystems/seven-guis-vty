@@ -2,4 +2,4 @@
 
 ## 0.1.0.0
 
-* First version. Released on an unsuspecting world.
+* Task 1: The [Counter](https://eugenkiss.github.io/7guis/tasks#counter)

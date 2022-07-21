@@ -5,7 +5,7 @@
 
 [7GUIS](https://eugenkiss.github.io/7guis/) is a set of 7 typical GUI programming tasks of varying levels of complexity. We're going to implement the 7GUIs in [Haskell](https://haskell.org) using the [reflex](https://reflex-frp.org) [functional reactive programming](https://en.wikipedia.org/wiki/Functional_reactive_programming) framework.
 
-## The Structure of this Document
+## The structure of this document
 
 This tutorial is packaged, like most Haskell applications and libraries, as a [cabal](https://www.haskell.org/cabal/) package. It was created by running `cabal init`. One thing that is a little unusual, though not unheard of, is that the source file for this package is a [literate Haskell](https://wiki.haskell.org/Literate_programming) file. Everything outside of code blocks that begin with "\`\`\`haskell" will be ignored by the compiler.
 
@@ -62,7 +62,7 @@ To compile the project via nix, run `nix-build` from the project directory. This
 
 Enough with the preliminaries; let's get on to the code.
 
-## The Code
+## The code
 
 ### Imports
 
@@ -137,7 +137,7 @@ Now, if you go into your REPL and run `aWayOut`, you should see a ... blank scre
 
 > As an exercise, you could try to add an alternative key combination that also exits the program. How about `Esc`?
 
-## The Counter GUI
+## The counter GUI
 
 Now we've got somewhere to put our first GUI. Our mission, should we choose to accept it, is to:
 
@@ -149,7 +149,7 @@ The exemplar for this GUI assignment looks like this:
 
 This GUI has a few parts: the frame, the textfield, and the button. We'll start by getting those all on the screen, and then we'll figure out how to hook them up.
 
-### The Frame
+### The frame
 
 This isn't the first time someone has had to draw a box around a GUI, thankfully. The [`box`](https://hackage.haskell.org/package/reflex-vty-0.2.0.1/docs/Reflex-Vty-Widget-Box.html#v:box) function from reflex-vty seems to fit the bill. We need to supply it with a style for the box border, and something to run inside the box.
 
@@ -167,7 +167,7 @@ We have a box.
 
 ![](images/box.png)
 
-### The Label
+### The label
 
 Now, let's add the label component. It'll eventually show the number of button clicks, but for now we'll give it a placeholder string.
 
@@ -188,7 +188,7 @@ And here's what that should look like:
 
 ![](images/label.png)
 
-### The Button
+### The button
 
 Next, let's add the button. You've probably guessed that reflex-vty has a function that would be useful here, and it does not disappoint. We'll use [`textButton`](https://hackage.haskell.org/package/reflex-vty-0.2.0.1/docs/Reflex-Vty-Widget-Input.html#v:textButton), which is a button containing some text. In our case, the button will say "Count", just like the exemplar from 7GUIs.
 
