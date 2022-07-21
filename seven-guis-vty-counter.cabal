@@ -1,0 +1,31 @@
+cabal-version:      2.4
+name:               seven-guis-vty-counter
+version:            0.1.0.0
+synopsis:           7GUIs counter in reflex-vty
+description:        Implementation of the 7GUIs counter in reflex-vty
+homepage:           https://github.com/obsidiansystems/seven-guis-vty
+bug-reports:        https://github.com/obsidiansystems/seven-guis-vty/issues
+license:            BSD-3-Clause
+license-file:       LICENSE
+author:             Obsidian Systems LLC
+maintainer:         maintainer@obsidian.systems
+copyright:          2022 Obsidian Systems LLC
+category:           GUI
+extra-source-files: CHANGELOG.md
+                    src/Main.md
+                    images/*.png
+                    LICENSE
+
+executable seven-guis-vty-counter
+    main-is:          Main.lhs
+    default-extensions:
+      OverloadedStrings
+      RecursiveDo
+    build-depends:    base
+                    , reflex
+                    , reflex-vty
+                    , text
+                    , vty
+    default-language: Haskell2010
+    ghc-options: -pgmL markdown-unlit -Wall
+    build-tool-depends: markdown-unlit:markdown-unlit -any
