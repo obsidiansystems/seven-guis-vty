@@ -23,7 +23,7 @@ We're going to use [reflex-platform](https://github.com/reflex-frp/reflex-platfo
 
 > Reflex Platform is a curated package set and set of tools that let you build Haskell packages so they can run on a variety of platforms. Reflex Platform is built on top of the nix package manager.
 > There are five main reasons to use Reflex Platform:
-> 
+>
 > 1. It's curated: the core packages in Reflex Platform are known to work together and are tested together.
 > 2. It's cached: the core packages in Reflex Platform are cached so you can download prebuilt binaries from the public cache instead of building from scratch.
 > 3. It's consistent: nix locks down dependencies even outside the Haskell ecosystem (e.g., versions of C libraries that the Haskell code depends on), so you get completely reproducible builds.
@@ -79,14 +79,14 @@ import qualified Data.Text as T
 
 ### Starting up a reflex-vty application
 
-Haskell applications have a `main :: IO ()` function that serves as the entrypoint to the program. 
+Haskell applications have a `main :: IO ()` function that serves as the entrypoint to the program.
 
 We define our main function at the very bottom of this tutorial, but we'll be writing many functions that match this type signature and could act as the definition of `main`.
 
 reflex-vty provides a function called [`mainWidget`](https://hackage.haskell.org/package/reflex-vty-0.2.0.1/docs/Reflex-Vty-Widget.html#v:mainWidget) that starts up a terminal application. The type signature for `mainWidget` looks like this:
 
 ```
-mainWidget :: (forall t m. (MonadVtyApp t m, HasImageWriter t m, MonadNodeId m, HasDisplayRegion t m, HasFocusReader t m, HasTheme t m, HasInput t m) => m (Event t ())) -> IO () 
+mainWidget :: (forall t m. (MonadVtyApp t m, HasImageWriter t m, MonadNodeId m, HasDisplayRegion t m, HasFocusReader t m, HasTheme t m, HasInput t m) => m (Event t ())) -> IO ()
 ```
 
 That's a lot to look at. Let's start with the part after `=>`:
@@ -108,7 +108,7 @@ The `m` around `m (Event t ())` represents the fact that this event is the resul
 We can call `mainWidget` but we need to provide that first argument. At a minimum, when a user presses `Ctrl+c`, we want the progam to terminate.  The [`keyCombo`](https://hackage.haskell.org/package/reflex-vty-0.2.0.1/docs/Reflex-Vty-Widget.html#v:keyCombo) function takes a combination of keys and produces an event that fires whenever that key combination is pressed.
 
 ```
-keyCombo :: (Reflex t, Monad m, HasInput t m) => KeyCombo -> m (Event t KeyCombo) 
+keyCombo :: (Reflex t, Monad m, HasInput t m) => KeyCombo -> m (Event t KeyCombo)
 ```
 
 Note that `keyCombo` requires `HasInput t m`, which happens to be one of the constraints that the argument to `mainWidget` satisfies. Lucky us.
@@ -165,7 +165,7 @@ frame = mainWidget $ do
 
 We have a box.
 
-![](images/box.png)
+![](images/counter/box.png)
 
 ### The label
 
@@ -186,7 +186,7 @@ frameWithLabel = mainWidget $ do
 
 And here's what that should look like:
 
-![](images/label.png)
+![](images/counter/label.png)
 
 ### The button
 
@@ -207,7 +207,7 @@ frameWithLabelAndButton = mainWidget $ do
 
 Uh oh, we've lost the text. It looks like the button has taken over the whole box! Perhaps its covering up the text?
 
-![](images/coverup.png)
+![](images/counter/coverup.png)
 
 Looks like we need to figure out how to lay things out inside our little terminal app.
 
@@ -220,7 +220,7 @@ We'll specify our layout constraints using the [`tile`](https://hackage.haskell.
 First, we need to get into a context where we can run `Layout` actions. The function [`initManager_`](https://hackage.haskell.org/package/reflex-vty-0.2.0.1/docs/Reflex-Vty-Widget-Layout.html#v:initManager_) seems to fit the bill:
 
 ```
-initManager_ :: (HasDisplayRegion t m, Reflex t, MonadHold t m, MonadFix m) => Layout t (Focus t m) a -> m a 
+initManager_ :: (HasDisplayRegion t m, Reflex t, MonadHold t m, MonadFix m) => Layout t (Focus t m) a -> m a
 ```
 
 The documentation says it will "Initialize a Layout and Focus management context." We're not particularly concerned with the `Focus` part right now, but we do want to run a `Layout` action, and the argument to `initManager_` is such an action.
@@ -259,7 +259,7 @@ tiling = mainWidget $ initManager_ $ do
 
 Behold, the fruit of our labor:
 
-![](images/tiling.png)
+![](images/counter/tiling.png)
 
 We're close. The 7GUIs example had the widgets side by side, and we've got them stacked in a column. Let's try putting everything inside the `box` in a [`row`](https://hackage.haskell.org/package/reflex-vty-0.2.0.1/docs/Reflex-Vty-Widget-Layout.html#v:row).
 
@@ -276,7 +276,7 @@ laidOut = mainWidget $ initManager_ $ do
 
 The widgets are now side-by-side, just the way we want them.
 
-![](images/laidout.png)
+![](images/counter/laidout.png)
 
 ### Reacting to button clicks
 
@@ -320,7 +320,7 @@ thisIsIt = mainWidget $ initManager_ $ do
 
 And we're done. There's a lot more that could be done to make the GUI nicer, or to add more features to it, but we've met the requirements and we've earned a break.
 
-![](images/thisIsIt.png)
+![](images/counter/thisIsIt.png)
 
 Let's plug that into `main` so that the compiled executable runs our final version.
 

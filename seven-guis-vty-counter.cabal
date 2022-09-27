@@ -17,10 +17,27 @@ extra-source-files: CHANGELOG.md
                     README.md
 
 executable seven-guis-vty-counter
-    main-is:          Main.lhs
+    main-is:          1_Counter.lhs
     default-extensions:
       OverloadedStrings
       RecursiveDo
+      LambdaCase
+    build-depends:    base >= 4.10 && < 4.16
+                    , reflex >= 0.8 && < 0.9
+                    , reflex-vty >= 0.2 && < 0.3
+                    , text >= 1.2.3 && < 1.3
+                    , vty >= 5.28 && < 5.37
+    default-language: Haskell2010
+    ghc-options: -pgmL markdown-unlit -Wall -threaded
+    build-tool-depends: markdown-unlit:markdown-unlit -any
+
+executable seven-guis-vty-temperature-converter
+    main-is:          2_Temperature.lhs
+    default-extensions:
+      OverloadedStrings
+      RecursiveDo
+      LambdaCase
+      ScopedTypeVariables
     build-depends:    base >= 4.10 && < 4.16
                     , reflex >= 0.8 && < 0.9
                     , reflex-vty >= 0.2 && < 0.3

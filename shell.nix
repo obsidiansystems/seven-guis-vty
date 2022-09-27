@@ -11,6 +11,6 @@ in
       platform.ghc.markdown-unlit
     ];
     inputsFrom = [
-      (import ./.).env
+      (import ./.).seven-guis-vty.env
     ];
   }
