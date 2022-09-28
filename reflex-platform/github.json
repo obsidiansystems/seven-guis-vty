@@ -1,8 +1,8 @@
 {
   "owner": "reflex-frp",
   "repo": "reflex-platform",
-  "branch": "develop",
+  "branch": "fendor/develop+reflex-vty-text-input",
   "private": false,
-  "rev": "8f8d5efc7b844d6eb0b9d909beb3450c1db026dd",
-  "sha256": "1s4vzxd4cilkf2wbq6ajnciabjr32nysjqbwwgpxz7lzxasdx051"
+  "rev": "8c807ffa40ce49a0d60fa65582f871d031cbcd4a",
+  "sha256": "1iwb8j6y04zrjdsfip0686sbj6rxw9ypsx549ywmg80xwhg77w6x"
 }
