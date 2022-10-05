@@ -1,5 +1,5 @@
 cabal-version:      2.4
-name:               seven-guis-vty-counter
+name:               seven-guis-vty
 version:            0.1.0.0
 synopsis:           7GUIs counter in reflex-vty
 description:        Implementation of the 7GUIs counter in reflex-vty

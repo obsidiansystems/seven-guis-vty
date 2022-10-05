@@ -50,15 +50,15 @@ This tells you that you're in a "nix-shell" environment. Inside this environment
 
 From within the nix-shell, you can run:
 
-* `cabal repl` to enter a REPL
-* `cabal build` to build the project
-* `ghcid` to watch source files and display any errors or warnings that arise when they change
+* `cabal repl seven-guis-vty-counter` to enter a REPL
+* `cabal build seven-guis-vty-counter` to build the project
+* `ghcid -c "cabal repl seven-guis-vty-counter"` to watch source files and display any errors or warnings that arise when they change
 
 From within the REPL, you can run any of the functions defined later in this tutorial (e.g., `hello`) to see what it does.
 
 #### nix-build
 
-To compile the project via nix, run `nix-build` from the project directory. This will create a `result` symlink in your project folder. Run the program by executing `result/bin/seven-guis-vty-counter`.
+To compile the project via nix, run `nix-build -A seven-guis-vty-counter` from the project directory. This will create a `result` symlink in your project folder. Run the program by executing `result/bin/seven-guis-vty-counter`.
 
 Enough with the preliminaries; let's get on to the code.
 

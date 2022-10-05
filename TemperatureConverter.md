@@ -19,6 +19,36 @@ This the second blog post in a series of seven, about implementing [7GUIs: A GUI
 This tutorial is packaged, like most Haskell applications and libraries, as a [cabal](https://www.haskell.org/cabal/) package.
 For more details about the structure of this document, we refer to the [first blog post](https://obsidian.systems/blog/seven-guis-vty-1-counter).
 
+### Running this project
+
+We use reflex-platform to build an environment that contains all the dependencies you need to build this project. You can either compile this project and run the resulting executable, or open it in an interpreter and run it from there. The latter makes for a quicker development cycle if you're modifying any of the example code.
+
+#### The development environment
+
+To enter a shell from which you can build the project or enter the REPL, run `nix-shell` from the project directory.
+
+You'll be put in a nix-shell that looks something like this:
+
+```bash
+[nix-shell:/path/to/project]$
+```
+
+This tells you that you're in a "nix-shell" environment. Inside this environment, the dependencies for our project are ready for us to use.
+
+From within the nix-shell, you can run:
+
+* `cabal repl seven-guis-vty-temperature-converter` to enter a REPL
+* `cabal build seven-guis-vty-temperature-converter` to build the project
+* `ghcid -c "cabal repl seven-guis-vty-temperature-converter"` to watch source files and display any errors or warnings that arise when they change
+
+From within the REPL, you can run any of the functions defined later in this tutorial (e.g., `hello`) to see what it does.
+
+#### nix-build
+
+To compile the project via nix, run `nix-build -A seven-guis-vty-temperature-converter` from the project directory. This will create a `result` symlink in your project folder. Run the program by executing `result/bin/seven-guis-vty-temperature-converter`.
+
+Enough with the preliminaries; let's get on to the code.
+
 ## The code
 
 We will jump right into it! This tutorial assumes you have read the [first blog post](https://obsidian.systems/blog/seven-guis-vty-1-counter) in this series; as such, we won't explain functions that have been encountered before again. First, let's get started with the preliminaries.
@@ -140,14 +170,14 @@ As a first step, we want to be able to enter a number in the "Celsius" input fie
 ```
 data TextInputConfig t = TextInputConfig
   { _textInputConfig_initialValue :: Z.TextZipper
-  , _textInputConfig_setValue :: Maybe (Event t Z.TextZipper)
+  , _textInputConfig_modify :: Event t (Z.TextZipper -> Z.TextZipper)
   ...
   }
 ```
 
 > NB: we removed documentation for the fields, as it mentions things we are not ready to talk about yet; however, do notice that the documentation covers what we talk about here.
 
-The two fields from `TextInputConfig` we care about for this challenge are `_textInputConfig_initialValue` and `_textInputConfig_setValue`. Both of these fields work somehow with `Z.TextZipper`, but we don't know yet what `Z.TextZipper` is, so we have to make a very quick detour.
+The two fields from `TextInputConfig` we care about for this challenge are `_textInputConfig_initialValue` and `_textInputConfig_modify`. Both of these fields work somehow with `Z.TextZipper`, but we don't know yet what `Z.TextZipper` is, so we have to make a very quick detour.
 
 `Z.TextZipper` is a slightly more complicated data structure than plain `Text`, because it saves more information. For example, the `Z.TextZipper` allows us to choose where the cursor currently is in the text input. For the sake of simplicity, you can assume that `Z.TextZipper` is basically a string with extra information that is necessary for more complex user interaction, but it is also kind of an implementation detail.
 
@@ -156,23 +186,26 @@ Ok, now that we have established `Z.TextZipper` is basically `Text`, or a string
 ```
 data TextInputConfig t = TextInputConfig
   { _textInputConfig_initialValue :: Z.TextZipper
-  , _textInputConfig_setValue :: Maybe (Event t Z.TextZipper)
+  , _textInputConfig_modify :: Event t (Z.TextZipper -> Z.TextZipper)
   ...
   }
 ```
 
 The expected value of `_textInputConfig_initialValue` becomes now apparent: it is just some string that we want to display at the very beginning. Thanks to `OverloadedStrings`, we may even just write a string directly.
-On the other hand `_textInputConfig_setValue` looks a bit more complicated than it is. It basically just says: if an event is supplied, then whenever that event triggers, set the value of the text input to the `Z.TextZipper` value taken from our given Event. That seems straightforward enough and sounds like exactly the thing we are looking for! We just need to know when our text input changes. Maybe `TextInput` will shed more light on how:
+On the other hand `_textInputConfig_modify` looks a bit more complicated than it is. It basically just says: if an event is supplied, then apply the function in that event to the value in the `textInput`. You get the old value, or the current value, of the `Z.TextZipper` that's currently in the `textInput`, as a parameter, and may decide based on the old value how to modify the `Z.TextZipper`. We, probably, want to discard the old value,
+and just produce a new value, but we will get to it.
+
+In any way, using `_textInputConfig_modify` seems straightforward enough and sounds like exactly the thing we are looking for! We just need to know when our text input changes. Maybe `TextInput` will shed more light on how:
 
 ```
 data TextInput t = TextInput
   { _textInput_value :: Dynamic t Text
-  , _textInput_userInput :: Event t TextZipper
+  , _textInput_userInput :: Event t Z.TextZipper
   ...
   }
 ```
 
-Aha! If you remember, a `Dynamic` is basically a `Behavior` and `Event` at the same time, *and* it even contains exactly what is written in our text input! Sounds like TextInput is exactly what need. Let's give it a try and hook up the `_textInput_value` from our Celsius input field with the `_textInputConfig_setValue` of our Fahrenheit input field.
+Aha! If you remember, a `Dynamic` is basically a `Behavior` and `Event` at the same time, *and* it even contains exactly what is written in our text input! Sounds like TextInput is exactly what need. Let's give it a try and hook up the `_textInput_value` from our Celsius input field with the `_textInputConfig_modify` of our Fahrenheit input field.
 
 ```haskell
 wrongSynchronizeCelsiusAndFahrenheit :: IO ()
@@ -183,8 +216,8 @@ wrongSynchronizeCelsiusAndFahrenheit = mainWidget $ initManager_ $ do
         grout flex $ text "Celsius ="
         let celsiusEv = updated (_textInput_value celsiusInput)
         let fahrenheitConfig = def
-              { _textInputConfig_setValue =
-                  Just (fmap Z.fromText celsiusEv)
+              { _textInputConfig_modify =
+                  fmap (\tz -> const (Z.fromText tz)) celsiusEv
               }
         tile flex $ textInput fahrenheitConfig
         grout flex $ text "Fahrenheit"
@@ -200,14 +233,14 @@ And it seems to be doing what we want:
 
 ### Cyclical update dependencies
 
-However, this is unfortunately not entirely correct! In fact, we will run into problems as soon as we try to hook up the Fahrenheit text input back into `_textInputConfig_setValue` for Celsius. The issue is quite fundamental, since `Dynamic t Text` changes when either the user inputs something in the UI, or when `_textInputConfig_setValue` is used to update the value.
+However, this is unfortunately not entirely correct! In fact, we will run into problems as soon as we try to hook up the Fahrenheit text input back into `_textInputConfig_modify` for Celsius. The issue is quite fundamental, since `Dynamic t Text` changes when either the user inputs something in the UI, or when `_textInputConfig_modify` is used to update the value.
 
 Let's walk through an example:
 
 1. You input "42" into the celsius field.
 2. The value of `_textInput_value celsiusInput` changes.
 3. The event from `updated (_textInput_value celsiusInput)` is triggered.
-4. This causes the Event `_textInputConfig_setValue` to fire, changing the value of `_textInput_value fahrenheitInput`.
+4. This causes the Event `_textInputConfig_modify` to fire, changing the value of `_textInput_value fahrenheitInput`.
 5. Since the value of `_textInput_value fahrenheitInput` changes, the event `updated (_textInput_value fahrenheitInput)` fires.
 6. Now, we set the value of `_textInput_value celsiusInput` again, and jump back to 3.
 
@@ -223,7 +256,7 @@ In short, our current design *can not* work. What we need instead is something t
 
 ![](images/temperature/cyclic-good.png)
 
-While these might almost look the same, the important bit is to separate the `User Input` and `setValue` events. Previously, we subscribed to the *change events* of our value in the text input. What we need is to subscribe to the events the *user creates*. And this is where the function `_textInput_userInput` comes into play. It only contains the events created by the user: the contents of our text input after the `User Input` events (e.g. keyboard presses, *etc*) have been applied to our text input.
+While these might almost look the same, the important bit is to separate the `User Input` and `modifyValue` events. Previously, we subscribed to the *change events* of our value in the text input. What we need is to subscribe to the events the *user creates*. And this is where the function `_textInput_userInput` comes into play. It only contains the events created by the user: the contents of our text input after the `User Input` events (e.g. keyboard presses, *etc*) have been applied to our text input.
 
 Now that we know how to break up the cyclic update dependency, let's take a look at how we can keep the contents of our two text inputs truly synchronized:
 
@@ -233,14 +266,14 @@ synchronizeTextInputs = mainWidget $ initManager_ $ do
   getout <- ctrlc
   tile flex $ box (pure roundedBoxStyle) $ row $ do
     rec let celsiusConfig = def
-              { _textInputConfig_setValue =
-                Just (_textInput_userInput fahrenheitInput)
+              { _textInputConfig_modify =
+                  fmap const (_textInput_userInput fahrenheitInput)
               }
         celsiusInput <- tile flex $ textInput celsiusConfig
         grout flex $ text "Celsius ="
         let fahrenheitConfig = def
-              { _textInputConfig_setValue =
-                  Just (_textInput_userInput celsiusInput)
+              { _textInputConfig_modify =
+                  fmap const (_textInput_userInput celsiusInput)
               }
         fahrenheitInput <- tile flex $ textInput fahrenheitConfig
         grout flex $ text "Fahrenheit"
@@ -289,7 +322,7 @@ celsiusToFahrenheit = mainWidget $ initManager_ $ do
     rec celsiusInput <- tile flex $ textInput def
         grout flex $ text "Celsius ="
         fahrenheitInput <- tile flex $ textInput def
-            { _textInputConfig_setValue = Just setFahrenheitEvent
+            { _textInputConfig_modify = fmap const setFahrenheitEvent
             }
         grout flex $ text "Fahrenheit"
         let setFahrenheitEvent =
@@ -335,11 +368,11 @@ bidirectionalTemperature = mainWidget $ initManager_ $ do
   getout <- ctrlc
   tile flex $ box (pure roundedBoxStyle) $ row $ do
     rec celsiusInput <- tile flex $ textInput def
-            { _textInputConfig_setValue = Just setCelsiusEvent
+            { _textInputConfig_modify = fmap const setCelsiusEvent
             }
         grout flex $ text "Celsius ="
         fahrenheitInput <- tile flex $ textInput def
-            { _textInputConfig_setValue = Just setFahrenheitEvent
+            { _textInputConfig_modify = fmap const setFahrenheitEvent
             }
         grout flex $ text "Fahrenheit"
         let celsiusEv = _textInput_userInput celsiusInput
@@ -393,11 +426,11 @@ thisIsIt = mainWidget $ initManager_ $ do
         let setCelsiusEvent = convertEvent toC (_textInput_userInput fahrenheitInput)
         let setFahrenheitEvent = convertEvent toF (_textInput_userInput celsiusInput)
         celsiusInput <- tile flex $ textInput def
-            { _textInputConfig_setValue = Just setCelsiusEvent
+            { _textInputConfig_modify = fmap const setCelsiusEvent
             }
         grout flex $ text "Celsius ="
         fahrenheitInput <- tile flex $ textInput def
-            { _textInputConfig_setValue = Just setFahrenheitEvent
+            { _textInputConfig_modify = fmap const setFahrenheitEvent
             }
         grout flex $ text "Fahrenheit"
     return ()
