@@ -38,11 +38,11 @@ executable seven-guis-vty-temperature-converter
       RecursiveDo
       LambdaCase
       ScopedTypeVariables
-    build-depends:    base >= 4.10 && < 4.16
-                    , reflex >= 0.8 && < 0.9
-                    , reflex-vty >= 0.2 && < 0.3
-                    , text >= 1.2.3 && < 1.3
-                    , vty >= 5.28 && < 5.37
+    build-depends:    base
+                    , reflex
+                    , reflex-vty
+                    , text
+                    , vty
     default-language: Haskell2010
     ghc-options: -pgmL markdown-unlit -Wall -threaded
     build-tool-depends: markdown-unlit:markdown-unlit -any
