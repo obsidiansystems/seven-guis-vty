@@ -127,7 +127,7 @@ singleTextInput :: IO ()
 singleTextInput = mainWidget $ initManager_ $ do
   getout <- ctrlc
   tile flex $ box (pure roundedBoxStyle) $ row $ do
-    rec tile flex $ textInput def
+    rec _ <- tile flex $ textInput def
     return ()
   return $ fmap (\_ -> ()) getout
 ```
@@ -149,9 +149,9 @@ multipleTextInputLayout :: IO ()
 multipleTextInputLayout = mainWidget $ initManager_ $ do
   getout <- ctrlc
   tile flex $ box (pure roundedBoxStyle) $ row $ do
-    rec tile flex $ textInput def
+    rec _ <- tile flex $ textInput def
         grout flex $ text "Celsius ="
-        tile flex $ textInput def
+        _ <- tile flex $ textInput def
         grout flex $ text "Fahrenheit"
     return ()
   return $ fmap (\_ -> ()) getout
@@ -219,7 +219,7 @@ wrongSynchronizeCelsiusAndFahrenheit = mainWidget $ initManager_ $ do
               { _textInputConfig_modify =
                   fmap (\tz -> const (Z.fromText tz)) celsiusEv
               }
-        tile flex $ textInput fahrenheitConfig
+        _ <- tile flex $ textInput fahrenheitConfig
         grout flex $ text "Fahrenheit"
     return ()
   return $ fmap (\_ -> ()) getout
@@ -321,7 +321,7 @@ celsiusToFahrenheit = mainWidget $ initManager_ $ do
   tile flex $ box (pure roundedBoxStyle) $ row $ do
     rec celsiusInput <- tile flex $ textInput def
         grout flex $ text "Celsius ="
-        fahrenheitInput <- tile flex $ textInput def
+        _fahrenheitInput <- tile flex $ textInput def
             { _textInputConfig_modify = fmap const setFahrenheitEvent
             }
         grout flex $ text "Fahrenheit"

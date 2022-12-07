@@ -200,7 +200,7 @@ frameWithLabelAndButton = mainWidget $ do
   getout <- ctrlc
   box (pure roundedBoxStyle) $ do
     text "Nothing to see here"
-    textButton def "Count"
+    _ <- textButton def "Count"
     return ()
   return $ fmap (\_ -> ()) getout
 ```
@@ -235,7 +235,7 @@ flexbox = mainWidget $ initManager_ $ do
   getout <- ctrlc
   grout flex $ box (pure roundedBoxStyle) $ do
     text "Nothing to see here"
-    textButton def "Count"
+    _ <- textButton def "Count"
     return ()
   return $ fmap (\_ -> ()) getout
 ```
@@ -252,7 +252,7 @@ tiling = mainWidget $ initManager_ $ do
   getout <- ctrlc
   grout flex $ box (pure roundedBoxStyle) $ do
     grout flex $ text "Nothing to see here"
-    tile flex $ textButton def "Count"
+    _ <- tile flex $ textButton def "Count"
     return ()
   return $ fmap (\_ -> ()) getout
 ```
@@ -269,7 +269,7 @@ laidOut = mainWidget $ initManager_ $ do
   getout <- ctrlc
   grout flex $ box (pure roundedBoxStyle) $ row $ do
     grout flex $ text "Nothing to see here"
-    tile flex $ textButton def "Count"
+    _ <- tile flex $ textButton def "Count"
     return ()
   return $ fmap (\_ -> ()) getout
 ```
@@ -296,7 +296,7 @@ countEmUp = mainWidget $ initManager_ $ do
     grout flex $ text "Nothing to see here"
     buttonClicked <- tile flex $ textButton def "Count"
     numClicks <- count buttonClicked
-    let numClicksText = current $ fmap (T.pack . show) numClicks
+    let _numClicksText = current $ fmap (T.pack . show) numClicks
     return ()
   return $ fmap (\_ -> ()) getout
 ```
