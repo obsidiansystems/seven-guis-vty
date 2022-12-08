@@ -58,6 +58,8 @@ We will jump right into it! This tutorial assumes you have read the [first blog 
 As mentioned above, we'll start by importing the libraries our project depends on. Don't worry if you don't understand why something is in the import list: we'll explain that as we go.
 
 ```haskell
+-- We'll use ScopedTypeVariables to be able to annotate some types
+{-# LANGUAGE ScopedTypeVariables #-}
 -- These imports are unqualified because we'll be using them heavily
 import Reflex
 import Reflex.Vty
@@ -79,7 +81,7 @@ counter = mainWidget $ initManager_ $ do
   tile flex $ box (pure roundedBoxStyle) $ row $ do
     rec grout flex $ text numClicksText
         buttonClicked <- tile flex $ textButton def "Count"
-        numClicks <- count buttonClicked
+        (numClicks :: Dynamic t Integer) <- count buttonClicked
         let numClicksText = current $ fmap (T.pack . show) numClicks
     return ()
   return $ fmap (\_ -> ()) getout
