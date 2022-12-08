@@ -1,6 +1,6 @@
 # Revision history for seven-guis-vty
 
-## Unreleased
+## 0.2.0.0
 
 * Refactor repository for multiple blog posts
 * Task 2: The [Temperature Converter](https://eugenkiss.github.io/7guis/tasks#temp)
