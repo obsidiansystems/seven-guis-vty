@@ -15,4 +15,4 @@ Each of the code snippets will be a function that can be run on its own in the R
 ## Blog Posts
 
 1. [Counter](https://obsidian.systems/blog/seven-guis-vty-1-counter)
-1. Temperature-Converter (not published yet)
+1. [Temperature-Converter](https://blog.obsidian.systems/seven-guis-in-reflex-vty-part-2-the-temperature-converter/)
